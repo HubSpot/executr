@@ -1,0 +1,7 @@
+code[executable] {
+  cursor: pointer;
+}
+code[executable]:hover {
+  box-shadow: 0 1px 5px #BBB;
+}
+
