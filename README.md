@@ -1,10 +1,8 @@
-executr
-=======
+## executr
 
 Let your users execute the CoffeeScript in your documentation
 
-Including
---------
+### Including
 
 ````html
 <!-- You should already have jQuery included -->
@@ -15,8 +13,7 @@ Including
 <link rel="stylesheet" type="text/css" media="screen" href="src/css/executr.css">
 ````
 
-Usage
------
+### Usage
 
 The code blocks you wish to be executable should be wrapped in `<code executable></code>`.
 
@@ -35,13 +32,11 @@ $(function(){
 });
 ````
 
-Example
-------
+### Example
 
 See our messenger documentation for an example: http://hubspot.github.com/messenger/
 
-Other Options
--------
+### Other Options
 
 $.executr can be passed the following options
 
