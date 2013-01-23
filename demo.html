@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" media="screen" href="src/css/executr.css">
+
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+
+    <script type="text/coffeescript" src="src/coffee/executr.coffee"></script>
+    <script type="text/javascript" src="lib/coffee-script.js"></script>
+
+    <script>
+      $(function(){
+        $('body').on('coffeeScriptLoaded', function(){
+          $('body').executr({
+            'outputTo': 'code.output'
+          });
+        });
+      });
+    </script>
+
+  </head>
+  <body>
+    <code class="output"></code>
+    <pre>
+    <code executable>
+      x = 3 + 12
+      x / 2
+    </code>
+    </pre>
+  </body>
+</html>

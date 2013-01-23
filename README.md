@@ -39,3 +39,17 @@ Example
 ------
 
 See our messenger documentation for an example: http://hubspot.github.com/messenger/
+
+Other Options
+-------
+
+$.executr can be passed the following options
+
+````coffeescript
+{
+    codeSelector: 'code[executable]' # The jQuery selector items to be bound must match
+    outputTo: 'div.output' # An element which should receive the output.  The output will also be available in window.executrOutput.
+    appendOutput: true # Whether output should replace the contents of outputTo, or append to it
+    coffeeOptions: {} # Extra options for the CoffeeScript compiler
+}
+````
