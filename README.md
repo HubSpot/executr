@@ -18,9 +18,22 @@ Including
 Usage
 -----
 
-The code blocks you wish to be executable should be wrapped in `<code executable></code>` blocks.
+The code blocks you wish to be executable should be wrapped in `<code executable></code>`.
 
 Run `$.executr` on the container of multiple code elements, the body, or a single code block.
+
+````html
+<code executable>
+$ ->
+  alert "Testing!"
+</code>
+````
+
+````javascript
+$(function(){
+  $('body').executr();
+});
+````
 
 Example
 ------
