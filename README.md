@@ -7,8 +7,7 @@ Including
 --------
 
 ````html
-<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-
+<!-- You should already have jQuery included -->
 <script type="text/javascript" src="http://github.com/jashkenas/coffee-script/raw/master/extras/coffee-script.js"></script>
 <script type="text/coffeescript" src="src/coffee/executr.coffee"></script>
 
