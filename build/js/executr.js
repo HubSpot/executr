@@ -5,7 +5,7 @@
   runCoffee = function(opts, code) {
     var csOptions, line, output;
     csOptions = $.extend({}, opts.coffeeOptions);
-    code = "window.executrResult = -> " + (((function() {
+    code = "window.executrResult = do ->\n" + (((function() {
       var _i, _len, _ref, _results;
       _ref = code.split('\n');
       _results = [];

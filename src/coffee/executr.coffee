@@ -1,7 +1,7 @@
 runCoffee = (opts, code) ->
   csOptions = $.extend {}, opts.coffeeOptions
 
-  code = "window.executrResult = -> #{ ("\t#{ line }" for line in code.split('\n')).join('\n') }"
+  code = "window.executrResult = do ->\n#{ ("\t#{ line }" for line in code.split('\n')).join('\n') }"
 
   CoffeeScript.run code, csOptions
 
