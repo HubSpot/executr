@@ -4,6 +4,10 @@ $.fn.executr = (opts) ->
 
   opts = $.extend {}, defaults, opts
 
+  if this.is(opts.codeSelector)
+    # Allow single code blocks to be passed in
+    opts.codeSelector = null
+
   this.on 'click', opts.codeSelector, (e) ->
     $target = $ e.target
     $code = $target.parents(opts.codeSelector)
