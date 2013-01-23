@@ -19,6 +19,8 @@ The code blocks you wish to be executable should be wrapped in `<code executable
 
 Run `$.executr` on the container of multiple code elements, the body, or a single code block.
 
+Only the text (not tags) in the block will be executed, feel free to wrap your already-syntax-highlighted code.
+
 ````html
 <code executable>
 $ ->
@@ -43,8 +45,13 @@ $.executr can be passed the following options
 ````coffeescript
 {
     codeSelector: 'code[executable]' # The jQuery selector items to be bound must match
+
     outputTo: 'div.output' # An element which should receive the output.  The output will also be available in window.executrOutput.
     appendOutput: true # Whether output should replace the contents of outputTo, or append to it
+
     coffeeOptions: {} # Extra options for the CoffeeScript compiler
+
+    setUp: -> # Code to run before each code block
+    tearDown: -> # Code to run after each code block
 }
 ````
