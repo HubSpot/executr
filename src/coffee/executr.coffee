@@ -22,6 +22,70 @@ normalizeType = (codeType) ->
     else
       console.log "Code type #{ codeType } not understood."
 
+class Editor
+  constructor: (args) ->
+    @el = args.el
+    @opts = args.opts
+
+    @$el = $ @el
+
+    do @buildEditor
+    do @addRunButton
+
+  getValue: ->
+    @editor.getValue()
+
+  addRunButton: ->
+    @$runButton = $('<button>')
+    @$runButton.addClass 'executr-run-button'
+    @$runButton.text 'RUN'
+
+    @$editorCont.append @$runButton
+
+    @$runButton.css
+      top: "#{ @$editorCont.height() / 2 - @$runButton.height() / 2 }px"
+
+    if @$editorCont.height() < parseInt(@$runButton.css('font-size'), 10) + 4
+      @$runButton.css 'font-size', "#{ @$editorCont.height() - 4 }px"
+
+    @$runButton.click => do @execute
+
+  buildEditor: ->
+    @$editorCont = $('<div>')
+    @$editorCont.addClass 'executr-code-editor'
+    @$editorCont.css
+      height: "#{ @$el.height() }px"
+      width: "#{ @$el.width() }px"
+
+    @$editorCont.insertBefore @$el
+    @$el.detach()
+
+    @editor = CodeMirror @$editorCont[0],
+      value: @$el.text()
+      mode: normalizeType @$el.attr('data-type') ? @opts.defaultType
+ 
+  execute: ->
+    code = @getValue()
+
+    codeType = @editor.getMode().name
+
+    @$el.trigger 'executrBeforeExecute', [code, codeType, @opts]
+    if @opts.setUp?
+      @opts.setUp(codeType, @opts)
+
+    switch codeType
+      when 'javascript'
+        output = runJS @opts, code
+      when 'coffeescript'
+        output = runCoffee @opts, code
+
+    if @opts.tearDown?
+      @opts.tearDown(output, codeType, @opts)
+    @$el.trigger 'executrAfterExecute', [output, code, codeType, @opts]
+
+    insertOutput @opts, output
+
+     
 getCodeElement = (e, opts) ->
   $target = $ e.target
   $code = $target.parents(opts.codeSelector)
@@ -51,25 +115,6 @@ $.fn.executr = (opts) ->
     # Allow single code blocks to be passed in
     opts.codeSelector = null
 
-  this.on 'click', opts.codeSelector, (e) =>
-    $code = getCodeElement e, opts
-    code = $code.text()
+  this.find(opts.codeSelector).each (i, el) ->
+    new Editor({el: el, opts: opts})
 
-    codeType = $code.attr('data-type') ? $code.attr('type') ? opts.defaultType
-    codeType = normalizeType codeType
-
-    this.trigger 'executrBeforeExecute', [code, codeType, opts]
-    if opts.setUp?
-      opts.setUp(codeType, opts)
-
-    switch codeType
-      when 'javascript'
-        output = runJS opts, code
-      when 'coffeescript'
-        output = runCoffee opts, code
-
-    if opts.tearDown?
-      opts.tearDown(output, codeType, opts)
-    this.trigger 'executrAfterExecute', [output, code, codeType, opts]
-
-    insertOutput opts, output
