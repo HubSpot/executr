@@ -70,8 +70,8 @@ $.executr can be passed the following options
 
 Executr will fire two events on the element it is bound to:
 
-- executrBeforeExecute(code string, normalized code language, executr options)
-- executrAfterExecute(code output, code string, normalized code language, executr options) 
+- `executrBeforeExecute(code string, normalized code language, executr options)`
+- `executrAfterExecute(code output, code string, normalized code language, executr options)`
 
 #### Contributing
 
