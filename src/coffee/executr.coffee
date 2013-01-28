@@ -64,7 +64,7 @@ class Editor
       value: @$el.text()
       mode: normalizeType @$el.attr('data-type') ? @opts.defaultType
       
-    @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirror)
+    @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirrorOptions)
  
   execute: ->
     code = @getValue()
