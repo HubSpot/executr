@@ -75,7 +75,7 @@
     };
 
     Editor.prototype.buildEditor = function() {
-      var _ref;
+      var mirrorOpts, _ref;
       this.$editorCont = $('<div>');
       this.$editorCont.addClass('executr-code-editor');
       this.$editorCont.css({
@@ -84,10 +84,11 @@
       });
       this.$editorCont.insertBefore(this.$el);
       this.$el.detach();
-      return this.editor = CodeMirror(this.$editorCont[0], {
+      mirrorOpts = {
         value: this.$el.text(),
         mode: normalizeType((_ref = this.$el.attr('data-type')) != null ? _ref : this.opts.defaultType)
-      });
+      };
+      return this.editor = CodeMirror(this.$editorCont[0], $.extend(mirrorOpts, this.opts.codeMirrorOptions));
     };
 
     Editor.prototype.execute = function() {
