@@ -38,7 +38,7 @@ class Editor
   addRunButton: ->
     @$runButton = $('<button>')
     @$runButton.addClass 'executr-run-button'
-    @$runButton.text 'RUN'
+    @$runButton.text @opts.buttonText
 
     @$editorCont.append @$runButton
 
@@ -110,6 +110,7 @@ $.fn.executr = (opts) ->
     outputTo: false
     appendOutput: true
     defaultType: 'coffee'
+    buttonText: "RUN"
 
   opts = $.extend {}, defaults, opts
 
