@@ -1,7 +1,6 @@
 .executr-code-editor {
   overflow: hidden;
   position: relative;
-  padding-right: 100px;
   box-sizing: border-box;
 }
 .executr-code-editor .CodeMirror pre {
