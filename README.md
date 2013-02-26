@@ -16,8 +16,8 @@ See our messenger documentation for an example: http://hubspot.github.com/messen
 
 <!-- Include the CodeMirror languages you're going to use -->
 <script type="text/javascript" src="lib/CodeMirror/mode/coffeescript/coffeescript.js"></script>
-
 <script type="text/javascript" src="lib/coffee-script.js"></script>
+
 <script type="text/javascript" src="build/js/executr.js"></script>
 
 <link rel="stylesheet" type="text/css" media="screen" href="lib/CodeMirror/codemirror.css">
