@@ -31,7 +31,7 @@ class Editor
   constructor: (args) ->
     @el = args.el
     @opts = args.opts
-    @code = {}
+    @codeCache = {}
 
     @$el = $ @el
 
@@ -78,13 +78,13 @@ class Editor
       value: code
       mode: codeType
 
-    @code[codeType] = code
+    @codeCache[codeType] = code
 
     @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirrorOptions)
 
     @editor.on('change', (doc, changeObj) =>
       if changeObj?.origin and not (changeObj.origin instanceof Object)
-        @code = []
+        @codeCache = []
     )
 
   getType: ->
@@ -97,8 +97,8 @@ class Editor
     if type is currentType
       return
 
-    if @code[type]
-      code = @code[type]
+    if @codeCache[type]
+      code = @codeCache[type]
     else
       converter = converters["#{ currentType }:#{ type }"]
 
@@ -107,7 +107,7 @@ class Editor
         return
 
       code = converter @opts, @editor.getValue()
-      @code[type] = code
+      @codeCache[type] = code
 
     @editor.setOption 'mode', type
     @editor.setValue code

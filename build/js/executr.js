@@ -50,7 +50,7 @@
     function Editor(args) {
       this.el = args.el;
       this.opts = args.opts;
-      this.code = {};
+      this.codeCache = {};
       this.$el = $(this.el);
       this.buildEditor();
       this.addRunButton();
@@ -102,12 +102,11 @@
         value: code,
         mode: codeType
       };
-      this.code[codeType] = code;
+      this.codeCache[codeType] = code;
       this.editor = CodeMirror(this.$editorCont[0], $.extend(mirrorOpts, this.opts.codeMirrorOptions));
       return this.editor.on('change', function(doc, changeObj) {
         if ((changeObj != null ? changeObj.origin : void 0) && !(changeObj.origin instanceof Object)) {
-          console.log(changeObj.origin instanceof Object, changeObj.origin, Object);
-          return _this.code = [];
+          return _this.codeCache = [];
         }
       });
     };
@@ -123,8 +122,8 @@
       if (type === currentType) {
         return;
       }
-      if (this.code[type]) {
-        code = this.code[type];
+      if (this.codeCache[type]) {
+        code = this.codeCache[type];
       } else {
         converter = converters["" + currentType + ":" + type];
         if (converter == null) {
@@ -132,7 +131,7 @@
           return;
         }
         code = converter(this.opts, this.editor.getValue());
-        this.code[type] = code;
+        this.codeCache[type] = code;
       }
       this.editor.setOption('mode', type);
       this.editor.setValue(code);
