@@ -82,9 +82,14 @@ class Editor
     @$editorCont.insertBefore @$el
     @$el.detach()
 
+    codeType = normalizeType @$el.attr('data-type') ? @opts.defaultType
+    code = @$el.text()
+
     mirrorOpts =
-      value: @$el.text()
-      mode: normalizeType @$el.attr('data-type') ? @opts.defaultType
+      value: code
+      mode: codeType
+
+    @code[codeType] = code
 
     @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirrorOptions)
 

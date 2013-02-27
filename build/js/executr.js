@@ -21,7 +21,8 @@
       if (Js2coffee) {
         return out = Js2coffee.build(code);
       } else {
-        return console.error("Can't convert javascript to coffeescript");
+        console.error("Can't convert javascript to coffeescript");
+        return code;
       }
     },
     'javascript:javascript': function(opts, code) {
@@ -94,7 +95,7 @@
     };
 
     Editor.prototype.buildEditor = function() {
-      var mirrorOpts, _ref;
+      var code, codeType, mirrorOpts, _ref;
       this.$editorCont = $('<div>');
       this.$editorCont.addClass('executr-code-editor');
       this.$editorCont.css({
@@ -103,10 +104,13 @@
       });
       this.$editorCont.insertBefore(this.$el);
       this.$el.detach();
+      codeType = normalizeType((_ref = this.$el.attr('data-type')) != null ? _ref : this.opts.defaultType);
+      code = this.$el.text();
       mirrorOpts = {
-        value: this.$el.text(),
-        mode: normalizeType((_ref = this.$el.attr('data-type')) != null ? _ref : this.opts.defaultType)
+        value: code,
+        mode: codeType
       };
+      this.code[codeType] = code;
       return this.editor = CodeMirror(this.$editorCont[0], $.extend(mirrorOpts, this.opts.codeMirrorOptions));
     };
 
