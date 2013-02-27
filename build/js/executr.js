@@ -95,7 +95,8 @@
     };
 
     Editor.prototype.buildEditor = function() {
-      var code, codeType, mirrorOpts, _ref;
+      var code, codeType, mirrorOpts, _ref,
+        _this = this;
       this.$editorCont = $('<div>');
       this.$editorCont.addClass('executr-code-editor');
       this.$editorCont.css({
@@ -111,7 +112,10 @@
         mode: codeType
       };
       this.code[codeType] = code;
-      return this.editor = CodeMirror(this.$editorCont[0], $.extend(mirrorOpts, this.opts.codeMirrorOptions));
+      this.editor = CodeMirror(this.$editorCont[0], $.extend(mirrorOpts, this.opts.codeMirrorOptions));
+      return this.editor.on('change', function() {
+        return _this.code = [];
+      });
     };
 
     Editor.prototype.getType = function() {

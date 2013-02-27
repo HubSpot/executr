@@ -93,6 +93,10 @@ class Editor
 
     @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirrorOptions)
 
+    @editor.on('change', =>
+      @code = []
+    )
+
   getType: ->
     @editor.getMode().name
 
