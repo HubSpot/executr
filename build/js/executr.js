@@ -15,11 +15,6 @@
         bare: true
       });
       return CoffeeScript.compile(code, csOptions);
-    },
-    'javascript:coffeescript': function(opts, code) {
-      var js2Options;
-      js2Options = $.extend({}, opts.js2Options);
-      return Js2coffee.build(code, js2Options);
     }
   };
 

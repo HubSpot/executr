@@ -9,11 +9,6 @@ converters =
 
     CoffeeScript.compile code, csOptions
 
-  'javascript:coffeescript': (opts, code) ->
-    js2Options = $.extend {}, opts.js2Options
-
-    Js2coffee.build code, js2Options
-
 normalizeType = (codeType) ->
   switch codeType.toLowerCase()
     when 'js', 'javascript', 'text/javascript', 'application/javascript'
