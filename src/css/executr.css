@@ -32,3 +32,7 @@ code[executable] {
 .executr-code-editor .executr-run-button:hover {
   opacity: 0.8;
 }
+
+.CodeMirror {
+  height: auto;
+}
