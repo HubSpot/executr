@@ -105,7 +105,6 @@ class Editor
       return
 
     runner opts, code
-    @switchType('javascript')
 
   execute: ->
     code = @getValue()

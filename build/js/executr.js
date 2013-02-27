@@ -59,7 +59,7 @@
       var _this = this;
       this.$runButton = $('<button>');
       this.$runButton.addClass('executr-run-button');
-      this.$runButton.text('RUN');
+      this.$runButton.text(this.opts.buttonText);
       this.$editorCont.append(this.$runButton);
       this.$runButton.css({
         top: "" + (this.$editorCont.height() / 2 - this.$runButton.height() / 2) + "px"
@@ -123,8 +123,7 @@
         console.error("Couldn't find a way to run " + type + " block");
         return;
       }
-      runner(opts, code);
-      return this.switchType('javascript');
+      return runner(opts, code);
     };
 
     Editor.prototype.execute = function() {
@@ -173,7 +172,8 @@
       codeSelector: 'code[executable]',
       outputTo: false,
       appendOutput: true,
-      defaultType: 'coffee'
+      defaultType: 'coffee',
+      buttonText: "RUN"
     };
     opts = $.extend({}, defaults, opts);
     if (this.is(opts.codeSelector)) {
