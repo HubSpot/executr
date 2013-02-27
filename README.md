@@ -35,6 +35,8 @@ in the code being executable, take a look at the v1.1 tag.
 
 Only the text (not tags) in the block will be executed, feel free to wrap your already-syntax-highlighted code.
 
+The code editor will assume the height and with of the code element.
+
 ````html
 <pre><code executable>
 $ ->
