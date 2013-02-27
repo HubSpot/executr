@@ -9,6 +9,23 @@ converters =
 
     CoffeeScript.compile code, csOptions
 
+
+  'javascript:coffeescript': (opts, code) ->
+    if Js2coffee
+      out = Js2coffee.build code
+    else
+      #fallback if you dont include Js2Coffee
+      console.error "Can't convert javascript to coffeescript"
+      return code
+
+  #passthrough
+  'javascript:javascript': (opts, code) ->
+    code
+
+  #passthrough
+  'coffeescript:coffeescript': (opts, code) ->
+    code
+
 normalizeType = (codeType) ->
   switch codeType.toLowerCase()
     when 'js', 'javascript', 'text/javascript', 'application/javascript'
@@ -22,14 +39,23 @@ class Editor
   constructor: (args) ->
     @el = args.el
     @opts = args.opts
+    @code = {}
 
     @$el = $ @el
 
     do @buildEditor
     do @addRunButton
+    do @addListeners
 
   getValue: ->
     @editor.getValue()
+
+  addListeners: ->
+    @$el.on 'executrSwitchCS', =>
+      @switchType 'coffeescript'
+
+    @$el.on 'executrSwitchJS', =>
+      @switchType 'javascript'
 
   addRunButton: ->
     @$runButton = $('<button>')
@@ -59,32 +85,42 @@ class Editor
     mirrorOpts =
       value: @$el.text()
       mode: normalizeType @$el.attr('data-type') ? @opts.defaultType
-      
+
     @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirrorOptions)
- 
+
   getType: ->
     @editor.getMode().name
 
   switchType: (type) ->
     type = normalizeType type
 
-    converter = converters["#{ @getType() }:#{ type }"]
+    if @code[type]
+      code = @code[type]
+    else
+      converter = converters["#{ @getType() }:#{ type }"]
 
-    unless converter?
-      console.error "Can't convert #{ @getType() } to #{ type }"
-      return
+      unless converter?
+        console.error "Can't convert #{ @getType() } to #{ type }"
+        return
 
-    code = converter @opts, @editor.getValue()
+      code = converter @opts, @editor.getValue()
+      @code[type] = code
 
     @editor.setOption 'mode', type
     @editor.setValue code
-    
+    @editor.refresh()
+
+    scrollInfo = @editor.getScrollInfo()
+
+    @$editorCont.css
+      height: "#{ scrollInfo.height }px"
+
   # Do the actual runny bit.
   #
   # Also handles converting the source into a language we know how to run.
   run: (type, opts, code) ->
     runner = runners[type]
-    
+
     # Non-recursivly (max depth == 1) try to convert the source
     # into a language we can run.
     unless runner?
@@ -94,7 +130,7 @@ class Editor
         if type is from and runners[to]
           runner = runners[to]
           code = func(opts, code)
-          
+
     if not runner?
       console.error "Couldn't find a way to run #{ type } block"
       return
@@ -117,7 +153,7 @@ class Editor
 
     insertOutput @opts, output
 
-     
+
 getCodeElement = (e, opts) ->
   $target = $ e.target
   $code = $target.parents(opts.codeSelector)
@@ -148,6 +184,15 @@ $.fn.executr = (opts) ->
     # Allow single code blocks to be passed in
     opts.codeSelector = null
 
-  this.find(opts.codeSelector).each (i, el) ->
+
+  codeSelectors = this.find(opts.codeSelector)
+
+  codeSelectors.each (i, el) ->
     new Editor({el: el, opts: opts})
+
+  $('.switch-cs').click ->
+    codeSelectors.trigger 'executrSwitchCS'
+
+  $('.switch-js').click ->
+    codeSelectors.trigger 'executrSwitchJS'
 

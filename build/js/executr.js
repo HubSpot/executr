@@ -15,6 +15,20 @@
         bare: true
       });
       return CoffeeScript.compile(code, csOptions);
+    },
+    'javascript:coffeescript': function(opts, code) {
+      var out;
+      if (Js2coffee) {
+        return out = Js2coffee.build(code);
+      } else {
+        return console.error("Can't convert javascript to coffeescript");
+      }
+    },
+    'javascript:javascript': function(opts, code) {
+      return code;
+    },
+    'coffeescript:coffeescript': function(opts, code) {
+      return code;
     }
   };
 
@@ -41,13 +55,25 @@
     function Editor(args) {
       this.el = args.el;
       this.opts = args.opts;
+      this.code = {};
       this.$el = $(this.el);
       this.buildEditor();
       this.addRunButton();
+      this.addListeners();
     }
 
     Editor.prototype.getValue = function() {
       return this.editor.getValue();
+    };
+
+    Editor.prototype.addListeners = function() {
+      var _this = this;
+      this.$el.on('executrSwitchCS', function() {
+        return _this.switchType('coffeescript');
+      });
+      return this.$el.on('executrSwitchJS', function() {
+        return _this.switchType('javascript');
+      });
     };
 
     Editor.prototype.addRunButton = function() {
@@ -89,16 +115,26 @@
     };
 
     Editor.prototype.switchType = function(type) {
-      var code, converter;
+      var code, converter, scrollInfo;
       type = normalizeType(type);
-      converter = converters["" + (this.getType()) + ":" + type];
-      if (converter == null) {
-        console.error("Can't convert " + (this.getType()) + " to " + type);
-        return;
+      if (this.code[type]) {
+        code = this.code[type];
+      } else {
+        converter = converters["" + (this.getType()) + ":" + type];
+        if (converter == null) {
+          console.error("Can't convert " + (this.getType()) + " to " + type);
+          return;
+        }
+        code = converter(this.opts, this.editor.getValue());
+        this.code[type] = code;
       }
-      code = converter(this.opts, this.editor.getValue());
       this.editor.setOption('mode', type);
-      return this.editor.setValue(code);
+      this.editor.setValue(code);
+      this.editor.refresh();
+      scrollInfo = this.editor.getScrollInfo();
+      return this.$editorCont.css({
+        height: "" + scrollInfo.height + "px"
+      });
     };
 
     Editor.prototype.run = function(type, opts, code) {
@@ -162,7 +198,7 @@
   };
 
   $.fn.executr = function(opts) {
-    var defaults;
+    var codeSelectors, defaults;
     defaults = {
       codeSelector: 'code[executable]',
       outputTo: false,
@@ -174,11 +210,18 @@
     if (this.is(opts.codeSelector)) {
       opts.codeSelector = null;
     }
-    return this.find(opts.codeSelector).each(function(i, el) {
+    codeSelectors = this.find(opts.codeSelector);
+    codeSelectors.each(function(i, el) {
       return new Editor({
         el: el,
         opts: opts
       });
+    });
+    $('.switch-cs').click(function() {
+      return codeSelectors.trigger('executrSwitchCS');
+    });
+    return $('.switch-js').click(function() {
+      return codeSelectors.trigger('executrSwitchJS');
     });
   };
 

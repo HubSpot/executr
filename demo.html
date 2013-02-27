@@ -8,8 +8,10 @@
     <script type="text/javascript" src="lib/CodeMirror/codemirror.js"></script>
     <script type="text/javascript" src="lib/CodeMirror/mode/coffeescript/coffeescript.js"></script>
     <script type="text/javascript" src="lib/CodeMirror/mode/javascript/javascript.js"></script>
-    <script type="text/javascript" src="build/js/executr.js"></script>
     <script type="text/javascript" src="lib/coffee-script.js"></script>
+    <script type="text/javascript" src="lib/underscore.min.js"></script>
+    <script type="text/javascript" src="lib/js2coffee.min.js"></script>
+    <script type="text/javascript" src="build/js/executr.js"></script>
 
     <script>
       $(function(){
@@ -29,7 +31,9 @@
 
     <pre>
 <code data-type="javascript" executable>(function(){
-  return 8; 
+  return 8;
 })();</code></pre>
   </body>
+  <button class="switch-js">To JavaScript</button>
+  <button class="switch-cs">To CoffeeScript</button>
 </html>
