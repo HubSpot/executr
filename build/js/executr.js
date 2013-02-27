@@ -104,8 +104,11 @@
       };
       this.code[codeType] = code;
       this.editor = CodeMirror(this.$editorCont[0], $.extend(mirrorOpts, this.opts.codeMirrorOptions));
-      return this.editor.on('change', function() {
-        return _this.code = [];
+      return this.editor.on('change', function(doc, changeObj) {
+        if ((changeObj != null ? changeObj.origin : void 0) && !(changeObj.origin instanceof Object)) {
+          console.log(changeObj.origin instanceof Object, changeObj.origin, Object);
+          return _this.code = [];
+        }
       });
     };
 

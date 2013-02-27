@@ -82,8 +82,9 @@ class Editor
 
     @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirrorOptions)
 
-    @editor.on('change', =>
-      @code = []
+    @editor.on('change', (doc, changeObj) =>
+      if changeObj?.origin and not (changeObj.origin instanceof Object)
+        @code = []
     )
 
   getType: ->
