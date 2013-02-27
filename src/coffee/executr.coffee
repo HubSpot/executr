@@ -1,17 +1,18 @@
-runCoffee = (opts, code) ->
-  csOptions = $.extend {}, opts.coffeeOptions
+runners =
+  'javascript': (opts, code) ->
+      eval code
 
-  code = "window.executrResult = do ->\n#{ ("\t#{ line }" for line in code.split('\n')).join('\n') }"
+converters =
+  'coffeescript:javascript': (opts, code) ->
+    csOptions = $.extend {}, opts.coffeeOptions,
+      bare: true
 
-  CoffeeScript.run code, csOptions
+    CoffeeScript.compile code, csOptions
 
-  output = window.executrResult
-  delete window.executrResult
-  
-  output
+  'javascript:coffeescript': (opts, code) ->
+    js2Options = $.extend {}, opts.js2Options
 
-runJS = (opts, code) ->
-  eval code
+    Js2coffee.build code, js2Options
 
 normalizeType = (codeType) ->
   switch codeType.toLowerCase()
@@ -54,7 +55,7 @@ class Editor
     @$editorCont = $('<div>')
     @$editorCont.addClass 'executr-code-editor'
     @$editorCont.css
-      height: "#{ @$el.height() }px"
+      height: "#{ @$el.height() + 10 }px"
       width: "#{ @$el.width() }px"
 
     @$editorCont.insertBefore @$el
@@ -66,20 +67,55 @@ class Editor
       
     @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirrorOptions)
  
+  getType: ->
+    @editor.getMode().name
+
+  switchType: (type) ->
+    type = normalizeType type
+
+    converter = converters["#{ @getType() }:#{ type }"]
+
+    unless converter?
+      console.error "Can't convert #{ @getType() } to #{ type }"
+      return
+
+    code = converter @opts, @editor.getValue()
+
+    @editor.setOption 'mode', type
+    @editor.setValue code
+    
+  # Do the actual runny bit.
+  #
+  # Also handles converting the source into a language we know how to run.
+  run: (type, opts, code) ->
+    runner = runners[type]
+    
+    # Non-recursivly (max depth == 1) try to convert the source
+    # into a language we can run.
+    unless runner?
+      for key, func of converters
+        [from, to] = key.split ':'
+
+        if type is from and runners[to]
+          runner = runners[to]
+          code = func(opts, code)
+          
+    if not runner?
+      console.error "Couldn't find a way to run #{ type } block"
+      return
+
+    runner opts, code
+    @switchType('javascript')
+
   execute: ->
     code = @getValue()
-
-    codeType = @editor.getMode().name
+    codeType = @getType()
 
     @$el.trigger 'executrBeforeExecute', [code, codeType, @opts]
     if @opts.setUp?
       @opts.setUp(codeType, @opts)
 
-    switch codeType
-      when 'javascript'
-        output = runJS @opts, code
-      when 'coffeescript'
-        output = runCoffee @opts, code
+    output = @run codeType, @opts, code
 
     if @opts.tearDown?
       @opts.tearDown(output, codeType, @opts)

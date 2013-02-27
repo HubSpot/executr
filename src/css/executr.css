@@ -1,3 +1,7 @@
+code[executable] {
+  display: block;
+}
+
 .executr-code-editor {
   overflow: hidden;
   position: relative;
@@ -8,6 +12,7 @@
   border-width: 0;
   line-height: 1.3;
   font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;
+  font-size: 13px;
 }
 .executr-code-editor .executr-run-button {
   width: 84px;
