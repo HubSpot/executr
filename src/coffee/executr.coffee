@@ -9,6 +9,15 @@ converters =
 
     CoffeeScript.compile code, csOptions
 
+
+  'javascript:coffeescript': (opts, code) ->
+    if Js2coffee
+      out = Js2coffee.build code
+    else
+      #fallback if you dont include Js2Coffee
+      console.error "Can't convert javascript to coffeescript"
+      return code
+
 normalizeType = (codeType) ->
   switch codeType.toLowerCase()
     when 'js', 'javascript', 'text/javascript', 'application/javascript'
@@ -22,14 +31,20 @@ class Editor
   constructor: (args) ->
     @el = args.el
     @opts = args.opts
+    @codeCache = {}
 
     @$el = $ @el
 
     do @buildEditor
     do @addRunButton
+    do @addListeners
 
   getValue: ->
     @editor.getValue()
+
+  addListeners: ->
+    @$el.on 'executrSwitchType', (e, type) =>
+      @switchType type
 
   addRunButton: ->
     @$runButton = $('<button>')
@@ -56,35 +71,59 @@ class Editor
     @$editorCont.insertBefore @$el
     @$el.detach()
 
+    codeType = normalizeType @$el.attr('data-type') ? @opts.defaultType
+    code = @$el.text()
+
     mirrorOpts =
-      value: @$el.text()
-      mode: normalizeType @$el.attr('data-type') ? @opts.defaultType
-      
+      value: code
+      mode: codeType
+
+    @codeCache[codeType] = code
+
     @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirrorOptions)
- 
+
+    @editor.on('change', (doc, changeObj) =>
+      if changeObj?.origin and not (changeObj.origin instanceof Object)
+        @codeCache = []
+    )
+
   getType: ->
     @editor.getMode().name
 
   switchType: (type) ->
     type = normalizeType type
+    currentType = @getType()
 
-    converter = converters["#{ @getType() }:#{ type }"]
-
-    unless converter?
-      console.error "Can't convert #{ @getType() } to #{ type }"
+    if type is currentType
       return
 
-    code = converter @opts, @editor.getValue()
+    if @codeCache[type]
+      code = @codeCache[type]
+    else
+      converter = converters["#{ currentType }:#{ type }"]
+
+      unless converter?
+        console.error "Can't convert #{ currentType } to #{ type }"
+        return
+
+      code = converter @opts, @editor.getValue()
+      @codeCache[type] = code
 
     @editor.setOption 'mode', type
     @editor.setValue code
-    
+    @editor.refresh()
+
+    scrollInfo = @editor.getScrollInfo()
+
+    @$editorCont.css
+      height: "#{ scrollInfo.height }px"
+
   # Do the actual runny bit.
   #
   # Also handles converting the source into a language we know how to run.
   run: (type, opts, code) ->
     runner = runners[type]
-    
+
     # Non-recursivly (max depth == 1) try to convert the source
     # into a language we can run.
     unless runner?
@@ -94,7 +133,7 @@ class Editor
         if type is from and runners[to]
           runner = runners[to]
           code = func(opts, code)
-          
+
     if not runner?
       console.error "Couldn't find a way to run #{ type } block"
       return
@@ -117,7 +156,7 @@ class Editor
 
     insertOutput @opts, output
 
-     
+
 getCodeElement = (e, opts) ->
   $target = $ e.target
   $code = $target.parents(opts.codeSelector)
@@ -148,6 +187,14 @@ $.fn.executr = (opts) ->
     # Allow single code blocks to be passed in
     opts.codeSelector = null
 
-  this.find(opts.codeSelector).each (i, el) ->
+
+  codeSelectors = this.find(opts.codeSelector)
+
+  codeSelectors.each (i, el) ->
     new Editor({el: el, opts: opts})
+
+  $('.executr-switch').click ->
+    $this = $(@)
+    codeType = $this.attr('data-code-type')
+    codeSelectors.trigger 'executrSwitchType', codeType
 
