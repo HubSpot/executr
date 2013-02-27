@@ -24,12 +24,6 @@
         console.error("Can't convert javascript to coffeescript");
         return code;
       }
-    },
-    'javascript:javascript': function(opts, code) {
-      return code;
-    },
-    'coffeescript:coffeescript': function(opts, code) {
-      return code;
     }
   };
 
@@ -123,14 +117,18 @@
     };
 
     Editor.prototype.switchType = function(type) {
-      var code, converter, scrollInfo;
+      var code, converter, currentType, scrollInfo;
       type = normalizeType(type);
+      currentType = this.getType();
+      if (type === currentType) {
+        return;
+      }
       if (this.code[type]) {
         code = this.code[type];
       } else {
-        converter = converters["" + (this.getType()) + ":" + type];
+        converter = converters["" + currentType + ":" + type];
         if (converter == null) {
-          console.error("Can't convert " + (this.getType()) + " to " + type);
+          console.error("Can't convert " + currentType + " to " + type);
           return;
         }
         code = converter(this.opts, this.editor.getValue());

@@ -18,14 +18,6 @@ converters =
       console.error "Can't convert javascript to coffeescript"
       return code
 
-  #passthrough
-  'javascript:javascript': (opts, code) ->
-    code
-
-  #passthrough
-  'coffeescript:coffeescript': (opts, code) ->
-    code
-
 normalizeType = (codeType) ->
   switch codeType.toLowerCase()
     when 'js', 'javascript', 'text/javascript', 'application/javascript'
@@ -102,14 +94,18 @@ class Editor
 
   switchType: (type) ->
     type = normalizeType type
+    currentType = @getType()
+
+    if type is currentType
+      return
 
     if @code[type]
       code = @code[type]
     else
-      converter = converters["#{ @getType() }:#{ type }"]
+      converter = converters["#{ currentType }:#{ type }"]
 
       unless converter?
-        console.error "Can't convert #{ @getType() } to #{ type }"
+        console.error "Can't convert #{ currentType } to #{ type }"
         return
 
       code = converter @opts, @editor.getValue()
