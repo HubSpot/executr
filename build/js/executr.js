@@ -63,11 +63,8 @@
 
     Editor.prototype.addListeners = function() {
       var _this = this;
-      this.$el.on('executrSwitchCS', function() {
-        return _this.switchType('coffeescript');
-      });
-      return this.$el.on('executrSwitchJS', function() {
-        return _this.switchType('javascript');
+      return this.$el.on('executrSwitchType', function(e, type) {
+        return _this.switchType(type);
       });
     };
 
@@ -223,11 +220,11 @@
         opts: opts
       });
     });
-    $('.switch-cs').click(function() {
-      return codeSelectors.trigger('executrSwitchCS');
-    });
-    return $('.switch-js').click(function() {
-      return codeSelectors.trigger('executrSwitchJS');
+    return $('.executr-switch').click(function() {
+      var $this, codeType;
+      $this = $(this);
+      codeType = $this.attr('data-code-type');
+      return codeSelectors.trigger('executrSwitchType', codeType);
     });
   };
 

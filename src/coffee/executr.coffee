@@ -43,11 +43,8 @@ class Editor
     @editor.getValue()
 
   addListeners: ->
-    @$el.on 'executrSwitchCS', =>
-      @switchType 'coffeescript'
-
-    @$el.on 'executrSwitchJS', =>
-      @switchType 'javascript'
+    @$el.on 'executrSwitchType', (e, type) =>
+      @switchType type
 
   addRunButton: ->
     @$runButton = $('<button>')
@@ -195,9 +192,8 @@ $.fn.executr = (opts) ->
   codeSelectors.each (i, el) ->
     new Editor({el: el, opts: opts})
 
-  $('.switch-cs').click ->
-    codeSelectors.trigger 'executrSwitchCS'
-
-  $('.switch-js').click ->
-    codeSelectors.trigger 'executrSwitchJS'
+  $('.executr-switch').click ->
+    $this = $(@)
+    codeType = $this.attr('data-code-type')
+    codeSelectors.trigger 'executrSwitchType', codeType
 
