@@ -71,6 +71,7 @@ $.executr can be passed the following options
     appendOutput: true # Whether output should replace the contents of outputTo, or append to it
 
     defaultType: 'coffeescript' # The default source languange, if not supplied as a data-type attribute
+    type: 'coffeescript' # The type to force on all code blocks, even if otherwise specified.  Can also be a function.
     coffeeOptions: {} # Extra options for the CoffeeScript compiler
 
     codeMirrorOptions: {} # Extra options for CodeMirror

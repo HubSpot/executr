@@ -16,7 +16,7 @@ normalizeType = (codeType) ->
     when 'cs', 'coffee', 'coffeescript', 'text/coffeescript', 'application/coffeescript'
       return 'coffeescript'
     else
-      console.log "Code type #{ codeType } not understood."
+      console.error "Code type #{ codeType } not understood."
 
 class Editor
   constructor: (args) ->
@@ -56,9 +56,14 @@ class Editor
     @$editorCont.insertBefore @$el
     @$el.detach()
 
+    if typeof @opts.type is 'function'
+      type = @opts.type(@$el, @)
+    else
+      type = @opts.type ? @$el.attr('data-type') ? @opts.defaultType
+
     mirrorOpts =
       value: @$el.text()
-      mode: normalizeType @$el.attr('data-type') ? @opts.defaultType
+      mode: normalizeType type
       
     @editor = CodeMirror @$editorCont[0], $.extend(mirrorOpts, @opts.codeMirrorOptions)
  

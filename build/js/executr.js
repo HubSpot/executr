@@ -32,7 +32,7 @@
       case 'application/coffeescript':
         return 'coffeescript';
       default:
-        return console.log("Code type " + codeType + " not understood.");
+        return console.error("Code type " + codeType + " not understood.");
     }
   };
 
@@ -68,7 +68,7 @@
     };
 
     Editor.prototype.buildEditor = function() {
-      var mirrorOpts, _ref;
+      var mirrorOpts, type, _ref, _ref1;
       this.$editorCont = $('<div>');
       this.$editorCont.addClass('executr-code-editor');
       this.$editorCont.css({
@@ -77,9 +77,14 @@
       });
       this.$editorCont.insertBefore(this.$el);
       this.$el.detach();
+      if (typeof this.opts.type === 'function') {
+        type = this.opts.type(this.$el, this);
+      } else {
+        type = (_ref = (_ref1 = this.opts.type) != null ? _ref1 : this.$el.attr('data-type')) != null ? _ref : this.opts.defaultType;
+      }
       mirrorOpts = {
         value: this.$el.text(),
-        mode: normalizeType((_ref = this.$el.attr('data-type')) != null ? _ref : this.opts.defaultType)
+        mode: normalizeType(type)
       };
       return this.editor = CodeMirror(this.$editorCont[0], $.extend(mirrorOpts, this.opts.codeMirrorOptions));
     };
