@@ -1,0 +1,29 @@
+doctype 5
+
+html
+  head
+    title= title
+
+    meta(http-equiv="content-type", content="text/html; charset=UTF-8")
+    meta(name="viewport", content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;")
+
+    each style in styles
+      link(rel="stylesheet", media="all", href=style)
+
+  body
+    .intro.listing
+      !{ intro }
+
+    .files.listing
+      h2 Source Files
+      ul
+        each file in files
+          li
+            a(href=file.path)= file.displayPath
+
+    .examples.listing
+      h2 Examples
+      ol
+        each example in examples
+          li
+            a(href=example.path)= example.displayPath

@@ -1,0 +1,63 @@
+<!DOCTYPE html><html><head><title>Project Documentation</title><meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"><link rel="stylesheet" media="all" href="docs/build/resources/styles/index.css"></head><body><div class="intro listing"><h2>executr</h2>
+<p>Let your users execute and play with the CoffeeScript and JavaScript in your documentation</p>
+<h3>Example</h3>
+<p>See our messenger documentation for an example: <a href="http://hubspot.github.com/messenger/">http://hubspot.github.com/messenger/</a></p>
+<h3>Including</h3>
+<pre><code class="lang-html">&lt;!-- You should already have jQuery included --&gt;
+
+&lt;!-- Code Mirror is used to make the code blocks editable --&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;lib/CodeMirror/codemirror.js&quot;&gt;&lt;/script&gt;
+
+&lt;!-- Include the CodeMirror languages you&#39;re going to use --&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;lib/CodeMirror/mode/coffeescript/coffeescript.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;lib/coffee-script.js&quot;&gt;&lt;/script&gt;
+
+&lt;script type=&quot;text/javascript&quot; src=&quot;build/js/executr.js&quot;&gt;&lt;/script&gt;
+
+&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; media=&quot;screen&quot; href=&quot;lib/CodeMirror/codemirror.css&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; media=&quot;screen&quot; href=&quot;build/css/executr.css&quot;&gt;</code></pre>
+<h3>Usage</h3>
+<p>The code blocks you wish to be executable should be wrapped in <code>&lt;code executable&gt;&lt;/code&gt;</code>.</p>
+<p>Run <code>$.executr</code> on the container of multiple code elements, the body, or a single code block.</p>
+<p>The blocks will be converted into CodeMirror Editors, and a run button will be added.  If you&#39;re not interested
+in the code being editable, take a look at the v1.1 tag.</p>
+<p>Only the text (not tags) in the block will be executed, feel free to wrap your already-syntax-highlighted code.</p>
+<p>The code editor will assume the height + 10px and width of the code element.</p>
+<pre><code class="lang-html">&lt;pre&gt;&lt;code executable&gt;
+$ -&gt;
+  alert &quot;Testing!&quot;
+&lt;/code&gt;&lt;/pre&gt;</code></pre>
+<pre><code class="lang-javascript">$(function(){
+  $(&#39;body&#39;).executr();
+});</code></pre>
+<p>You can also make javascript executable, by either adding a <code>data-type=&quot;javascript&quot;</code> attribute to the code
+block, or by adding <code>defaultType: &#39;javascript&#39;</code> to the executr call.</p>
+<pre><code class="lang-html">&lt;code data-type=&quot;javascript&quot; executable&gt;
+alert(&quot;Testing!&quot;);
+&lt;/code&gt;</code></pre>
+<h3>Other Options</h3>
+<p>$.executr can be passed the following options</p>
+<pre><code class="lang-coffeescript">{
+    codeSelector: &#39;code[executable]&#39; # The jQuery selector items to be bound must match
+
+    outputTo: &#39;div.output&#39; # An element which should receive the output.
+    appendOutput: true # Whether output should replace the contents of outputTo, or append to it
+
+    defaultType: &#39;coffeescript&#39; # The default source languange, if not supplied as a data-type attribute
+    type: &#39;coffeescript&#39; # The type to force on all code blocks, even if otherwise specified.  Can also be a function.
+    coffeeOptions: {} # Extra options for the CoffeeScript compiler
+
+    codeMirrorOptions: {} # Extra options for CodeMirror
+
+    setUp: -&gt; # Code to run before each code block
+    tearDown: -&gt; # Code to run after each code block
+}</code></pre>
+<h4>Events</h4>
+<p>Executr will fire two events on the element it is bound to:</p>
+<ul>
+<li><code>executrBeforeExecute(code string, normalized code language, executr options)</code></li>
+<li><code>executrAfterExecute(code output, code string, normalized code language, executr options)</code></li>
+</ul>
+<h4>Contributing</h4>
+<p>You can build the project by running <code>./build.sh</code>.  It requires the CoffeeScript compiler.</p>
+</div><div class="files listing"><h2>Source Files</h2><ul></ul></div><div class="examples listing"><h2>Examples</h2><ol></ol></div></body></html>
