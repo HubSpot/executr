@@ -31,11 +31,11 @@ The code blocks you wish to be executable should be wrapped in `<code executable
 Run `$.executr` on the container of multiple code elements, the body, or a single code block.
 
 The blocks will be converted into CodeMirror Editors, and a run button will be added.  If you're not interested
-in the code being executable, take a look at the v1.1 tag.
+in the code being editable, take a look at the v1.1 tag.
 
 Only the text (not tags) in the block will be executed, feel free to wrap your already-syntax-highlighted code.
 
-The code editor will assume the height + 10px and with of the code element.
+The code editor will assume the height + 10px and width of the code element.
 
 ````html
 <pre><code executable>

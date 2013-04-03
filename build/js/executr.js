@@ -15,6 +15,15 @@
         bare: true
       });
       return CoffeeScript.compile(code, csOptions);
+    },
+    'javascript:coffeescript': function(opts, code) {
+      var out;
+      if (Js2coffee) {
+        return out = Js2coffee.build(code);
+      } else {
+        console.error("Can't convert javascript to coffeescript");
+        return code;
+      }
     }
   };
 
@@ -41,13 +50,22 @@
     function Editor(args) {
       this.el = args.el;
       this.opts = args.opts;
+      this.codeCache = {};
       this.$el = $(this.el);
       this.buildEditor();
       this.addRunButton();
+      this.addListeners();
     }
 
     Editor.prototype.getValue = function() {
       return this.editor.getValue();
+    };
+
+    Editor.prototype.addListeners = function() {
+      var _this = this;
+      return this.$el.on('executrSwitchType', function(e, type) {
+        return _this.switchType(type);
+      });
     };
 
     Editor.prototype.addRunButton = function() {
@@ -68,7 +86,8 @@
     };
 
     Editor.prototype.buildEditor = function() {
-      var mirrorOpts, type, _ref, _ref1;
+      var code, mirrorOpts, type, _ref, _ref1,
+        _this = this;
       this.$editorCont = $('<div>');
       this.$editorCont.addClass('executr-code-editor');
       this.$editorCont.css({
@@ -82,11 +101,19 @@
       } else {
         type = (_ref = (_ref1 = this.opts.type) != null ? _ref1 : this.$el.attr('data-type')) != null ? _ref : this.opts.defaultType;
       }
+      type = normalizeType(type);
+      code = this.$el.text();
       mirrorOpts = {
-        value: this.$el.text(),
-        mode: normalizeType(type)
+        value: code,
+        mode: type
       };
-      return this.editor = CodeMirror(this.$editorCont[0], $.extend(mirrorOpts, this.opts.codeMirrorOptions));
+      this.codeCache[type] = code;
+      this.editor = CodeMirror(this.$editorCont[0], $.extend(mirrorOpts, this.opts.codeMirrorOptions));
+      return this.editor.on('change', function(doc, changeObj) {
+        if ((changeObj != null ? changeObj.origin : void 0) && !(changeObj.origin instanceof Object)) {
+          return _this.codeCache = {};
+        }
+      });
     };
 
     Editor.prototype.getType = function() {
@@ -94,16 +121,30 @@
     };
 
     Editor.prototype.switchType = function(type) {
-      var code, converter;
+      var code, converter, currentType, scrollInfo;
       type = normalizeType(type);
-      converter = converters["" + (this.getType()) + ":" + type];
-      if (converter == null) {
-        console.error("Can't convert " + (this.getType()) + " to " + type);
+      currentType = this.getType();
+      if (type === currentType) {
         return;
       }
-      code = converter(this.opts, this.editor.getValue());
+      if (this.codeCache[type]) {
+        code = this.codeCache[type];
+      } else {
+        converter = converters["" + currentType + ":" + type];
+        if (converter == null) {
+          console.error("Can't convert " + currentType + " to " + type);
+          return;
+        }
+        code = converter(this.opts, this.editor.getValue());
+        this.codeCache[type] = code;
+      }
       this.editor.setOption('mode', type);
-      return this.editor.setValue(code);
+      this.editor.setValue(code);
+      this.editor.refresh();
+      scrollInfo = this.editor.getScrollInfo();
+      return this.$editorCont.css({
+        height: "" + scrollInfo.height + "px"
+      });
     };
 
     Editor.prototype.run = function(type, opts, code) {
@@ -167,7 +208,7 @@
   };
 
   $.fn.executr = function(opts) {
-    var defaults;
+    var codeSelectors, defaults;
     defaults = {
       codeSelector: 'code[executable]',
       outputTo: false,
@@ -179,11 +220,18 @@
     if (this.is(opts.codeSelector)) {
       opts.codeSelector = null;
     }
-    return this.find(opts.codeSelector).each(function(i, el) {
+    codeSelectors = this.find(opts.codeSelector);
+    codeSelectors.each(function(i, el) {
       return new Editor({
         el: el,
         opts: opts
       });
+    });
+    return $('.executr-switch').click(function() {
+      var $this, codeType;
+      $this = $(this);
+      codeType = $this.attr('data-code-type');
+      return codeSelectors.trigger('executrSwitchType', codeType);
     });
   };
 
