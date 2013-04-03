@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>executr.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>executr.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>runners =
+  <span class="string">'javascript'</span>: (opts, code) -&gt;
+      eval code
+
+converters =
+  <span class="string">'coffeescript:javascript'</span>: (opts, code) -&gt;
+    csOptions = $.extend {}, opts.coffeeOptions,
+      bare: <span class="literal">true</span>
+
+    CoffeeScript.compile code, csOptions
+
+
+  <span class="string">'javascript:coffeescript'</span>: (opts, code) -&gt;
+    <span class="keyword">if</span> Js2coffee
+      out = Js2coffee.build code
+    <span class="keyword">else</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>fallback if you dont include Js2Coffee</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      console.error <span class="string">"Can't convert javascript to coffeescript"</span>
+      <span class="keyword">return</span> code
+
+<span class="function"><span class="title">normalizeType</span></span> = (codeType) -&gt;
+  <span class="keyword">switch</span> codeType.toLowerCase()
+    <span class="keyword">when</span> <span class="string">'js'</span>, <span class="string">'javascript'</span>, <span class="string">'text/javascript'</span>, <span class="string">'application/javascript'</span>
+      <span class="keyword">return</span> <span class="string">'javascript'</span>
+    <span class="keyword">when</span> <span class="string">'cs'</span>, <span class="string">'coffee'</span>, <span class="string">'coffeescript'</span>, <span class="string">'text/coffeescript'</span>, <span class="string">'application/coffeescript'</span>
+      <span class="keyword">return</span> <span class="string">'coffeescript'</span>
+    <span class="keyword">else</span>
+      console.error <span class="string">"Code type <span class="subst">#{ codeType }</span> not understood."</span>
+
+<span class="class"><span class="keyword">class</span> <span class="title">Editor</span></span>
+  constructor: (args) -&gt;
+    <span class="property">@el</span> = args.el
+    <span class="property">@opts</span> = args.opts
+    <span class="property">@codeCache</span> = {}
+
+    <span class="property">@$el</span> = $ <span class="property">@el</span>
+
+    <span class="keyword">do</span> <span class="property">@buildEditor</span>
+    <span class="keyword">do</span> <span class="property">@addRunButton</span>
+    <span class="keyword">do</span> <span class="property">@addListeners</span>
+
+  getValue: -&gt;
+    <span class="property">@editor</span>.getValue()
+
+  addListeners: -&gt;
+    <span class="property">@$el</span>.<span class="literal">on</span> <span class="string">'executrSwitchType'</span>, (e, type) =&gt;
+      <span class="property">@switchType</span> type
+
+  addRunButton: -&gt;
+    <span class="property">@$runButton</span> = $(<span class="string">'&lt;button&gt;'</span>)
+    <span class="property">@$runButton</span>.addClass <span class="string">'executr-run-button'</span>
+    <span class="property">@$runButton</span>.text <span class="property">@opts</span>.buttonText
+
+    <span class="property">@$editorCont</span>.append <span class="property">@$runButton</span>
+
+    <span class="property">@$runButton</span>.css
+      top: <span class="string">"<span class="subst">#{ @$editorCont.height() / <span class="number">2</span> - @$runButton.height() / <span class="number">2</span> }</span>px"</span>
+
+    <span class="keyword">if</span> <span class="property">@$editorCont</span>.height() &lt; parseInt(<span class="property">@$runButton</span>.css(<span class="string">'font-size'</span>), <span class="number">10</span>) + <span class="number">4</span>
+      <span class="property">@$runButton</span>.css <span class="string">'font-size'</span>, <span class="string">"<span class="subst">#{ @$editorCont.height() - <span class="number">4</span> }</span>px"</span>
+
+    <span class="property">@$runButton</span>.click =&gt; <span class="keyword">do</span> <span class="property">@execute</span>
+
+  buildEditor: -&gt;
+    <span class="property">@$editorCont</span> = $(<span class="string">'&lt;div&gt;'</span>)
+    <span class="property">@$editorCont</span>.addClass <span class="string">'executr-code-editor'</span>
+    <span class="property">@$editorCont</span>.css
+      height: <span class="string">"<span class="subst">#{ @$el.height() + <span class="number">10</span> }</span>px"</span>
+      width: <span class="string">"<span class="subst">#{ @$el.width() }</span>px"</span>
+
+    <span class="property">@$editorCont</span>.insertBefore <span class="property">@$el</span>
+    <span class="property">@$el</span>.detach()
+
+    <span class="keyword">if</span> <span class="keyword">typeof</span> <span class="property">@opts</span>.type <span class="keyword">is</span> <span class="string">'function'</span>
+      type = <span class="property">@opts</span>.type(<span class="property">@$el</span>, @)
+    <span class="keyword">else</span>
+      type = <span class="property">@opts</span>.type ? <span class="property">@$el</span>.attr(<span class="string">'data-type'</span>) ? <span class="property">@opts</span>.defaultType
+
+    type = normalizeType type
+
+    code = <span class="property">@$el</span>.text()
+
+    mirrorOpts =
+      value: code
+      mode: type
+
+    <span class="property">@codeCache</span>[type] = code
+
+    <span class="property">@editor</span> = CodeMirror <span class="property">@$editorCont</span>[<span class="number">0</span>], $.extend(mirrorOpts, <span class="property">@opts</span>.codeMirrorOptions)
+
+    <span class="property">@editor</span>.<span class="literal">on</span>(<span class="string">'change'</span>, (doc, changeObj) =&gt;
+      <span class="keyword">if</span> changeObj?.origin <span class="keyword">and</span> <span class="keyword">not</span> (changeObj.origin <span class="keyword">instanceof</span> Object)
+        <span class="property">@codeCache</span> = {}
+    )
+
+  getType: -&gt;
+    <span class="property">@editor</span>.getMode().name
+
+  switchType: (type) -&gt;
+    type = normalizeType type
+    currentType = <span class="property">@getType</span>()
+
+    <span class="keyword">if</span> type <span class="keyword">is</span> currentType
+      <span class="keyword">return</span>
+
+    <span class="keyword">if</span> <span class="property">@codeCache</span>[type]
+      code = <span class="property">@codeCache</span>[type]
+    <span class="keyword">else</span>
+      converter = converters[<span class="string">"<span class="subst">#{ currentType }</span>:<span class="subst">#{ type }</span>"</span>]
+
+      <span class="keyword">unless</span> converter?
+        console.error <span class="string">"Can't convert <span class="subst">#{ currentType }</span> to <span class="subst">#{ type }</span>"</span>
+        <span class="keyword">return</span>
+
+      code = converter <span class="property">@opts</span>, <span class="property">@editor</span>.getValue()
+      <span class="property">@codeCache</span>[type] = code
+
+    <span class="property">@editor</span>.setOption <span class="string">'mode'</span>, type
+    <span class="property">@editor</span>.setValue code
+    <span class="property">@editor</span>.refresh()
+
+    scrollInfo = <span class="property">@editor</span>.getScrollInfo()
+
+    <span class="property">@$editorCont</span>.css
+      height: <span class="string">"<span class="subst">#{ scrollInfo.height }</span>px"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Do the actual runny bit.</p>
+<p>Also handles converting the source into a language we know how to run.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  run: (type, opts, code) -&gt;
+    runner = runners[type]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Non-recursivly (max depth == 1) try to convert the source
+into a language we can run.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">unless</span> runner?
+      <span class="keyword">for</span> key, func <span class="keyword">of</span> converters
+        [from, to] = key.split <span class="string">':'</span>
+
+        <span class="keyword">if</span> type <span class="keyword">is</span> from <span class="keyword">and</span> runners[to]
+          runner = runners[to]
+          code = func(opts, code)
+
+    <span class="keyword">if</span> <span class="keyword">not</span> runner?
+      console.error <span class="string">"Couldn't find a way to run <span class="subst">#{ type }</span> block"</span>
+      <span class="keyword">return</span>
+
+    runner opts, code
+
+  execute: -&gt;
+    code = <span class="property">@getValue</span>()
+    codeType = <span class="property">@getType</span>()
+
+    <span class="property">@$el</span>.trigger <span class="string">'executrBeforeExecute'</span>, [code, codeType, <span class="property">@opts</span>]
+    <span class="keyword">if</span> <span class="property">@opts</span>.setUp?
+      <span class="property">@opts</span>.setUp(codeType, <span class="property">@opts</span>)
+
+    output = <span class="property">@run</span> codeType, <span class="property">@opts</span>, code
+
+    <span class="keyword">if</span> <span class="property">@opts</span>.tearDown?
+      <span class="property">@opts</span>.tearDown(output, codeType, <span class="property">@opts</span>)
+    <span class="property">@$el</span>.trigger <span class="string">'executrAfterExecute'</span>, [output, code, codeType, <span class="property">@opts</span>]
+
+    insertOutput <span class="property">@opts</span>, output
+
+
+<span class="function"><span class="title">getCodeElement</span></span> = (e, opts) -&gt;
+  $target = $ e.target
+  $code = $target.parents(opts.codeSelector)
+
+  <span class="keyword">if</span> <span class="keyword">not</span> $code.length <span class="keyword">and</span> $target.<span class="keyword">is</span>(opts.codeSelector)
+    $code = $target
+
+  $code
+
+<span class="function"><span class="title">insertOutput</span></span> = (opts, output) -&gt;
+  <span class="keyword">if</span> opts.outputTo
+    <span class="keyword">if</span> opts.appendOutput
+      $(opts.outputTo).append $(<span class="string">'&lt;div&gt;'</span>).text(output)
+    <span class="keyword">else</span>
+      $(opts.outputTo).text output
+
+$.fn.<span class="function"><span class="title">executr</span></span> = (opts) -&gt;
+  defaults =
+    codeSelector: <span class="string">'code[executable]'</span>
+    outputTo: <span class="literal">false</span>
+    appendOutput: <span class="literal">true</span>
+    defaultType: <span class="string">'coffee'</span>
+    buttonText: <span class="string">"RUN"</span>
+
+  opts = $.extend {}, defaults, opts
+
+  <span class="keyword">if</span> <span class="keyword">this</span>.<span class="keyword">is</span>(opts.codeSelector)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Allow single code blocks to be passed in</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    opts.codeSelector = <span class="literal">null</span>
+
+
+  codeSelectors = <span class="keyword">this</span>.find(opts.codeSelector)
+
+  codeSelectors.each (i, el) -&gt;
+    <span class="keyword">new</span> Editor({el: el, opts: opts})
+
+  $(<span class="string">'.executr-switch'</span>).click -&gt;
+    $<span class="keyword">this</span> = $(@)
+    codeType = $<span class="keyword">this</span>.attr(<span class="string">'data-code-type'</span>)
+    codeSelectors.trigger <span class="string">'executrSwitchType'</span>, codeType</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
