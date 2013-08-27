@@ -30,19 +30,19 @@
 <h3>Example</h3>
 <p>See our messenger documentation for an example: <a href="http://hubspot.github.com/messenger/">http://hubspot.github.com/messenger/</a></p>
 <h3>Including</h3>
-<pre><code class="lang-html">&lt;!-- You should already have jQuery included --&gt;
+<pre><code class="lang-html"><span class="comment">&lt;!-- You should already have jQuery included --&gt;</span>
 
-&lt;!-- Code Mirror is used to make the code blocks editable --&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;lib/CodeMirror/codemirror.js&quot;&gt;&lt;/script&gt;
+<span class="comment">&lt;!-- Code Mirror is used to make the code blocks editable --&gt;</span>
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"lib/CodeMirror/codemirror.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
 
-&lt;!-- Include the CodeMirror languages you&#39;re going to use --&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;lib/CodeMirror/mode/coffeescript/coffeescript.js&quot;&gt;&lt;/script&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;lib/coffee-script.js&quot;&gt;&lt;/script&gt;
+<span class="comment">&lt;!-- Include the CodeMirror languages you're going to use --&gt;</span>
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"lib/CodeMirror/mode/coffeescript/coffeescript.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"lib/coffee-script.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
 
-&lt;script type=&quot;text/javascript&quot; src=&quot;build/js/executr.js&quot;&gt;&lt;/script&gt;
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"build/js/executr.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
 
-&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; media=&quot;screen&quot; href=&quot;lib/CodeMirror/codemirror.css&quot;&gt;
-&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; media=&quot;screen&quot; href=&quot;build/css/executr.css&quot;&gt;</code></pre>
+<span class="tag">&lt;<span class="title">link</span> <span class="attribute">rel</span>=<span class="value">"stylesheet"</span> <span class="attribute">type</span>=<span class="value">"text/css"</span> <span class="attribute">media</span>=<span class="value">"screen"</span> <span class="attribute">href</span>=<span class="value">"lib/CodeMirror/codemirror.css"</span>&gt;</span>
+<span class="tag">&lt;<span class="title">link</span> <span class="attribute">rel</span>=<span class="value">"stylesheet"</span> <span class="attribute">type</span>=<span class="value">"text/css"</span> <span class="attribute">media</span>=<span class="value">"screen"</span> <span class="attribute">href</span>=<span class="value">"build/css/executr.css"</span>&gt;</span></code></pre>
 <h3>Usage</h3>
 <p>The code blocks you wish to be executable should be wrapped in <code>&lt;code executable&gt;&lt;/code&gt;</code>.</p>
 <p>Run <code>$.executr</code> on the container of multiple code elements, the body, or a single code block.</p>
@@ -50,34 +50,34 @@
 in the code being editable, take a look at the v1.1 tag.</p>
 <p>Only the text (not tags) in the block will be executed, feel free to wrap your already-syntax-highlighted code.</p>
 <p>The code editor will assume the height + 10px and width of the code element.</p>
-<pre><code class="lang-html">&lt;pre&gt;&lt;code executable&gt;
+<pre><code class="lang-html"><span class="tag">&lt;<span class="title">pre</span>&gt;</span><span class="tag">&lt;<span class="title">code</span> <span class="attribute">executable</span>&gt;</span>
 $ -&gt;
-  alert &quot;Testing!&quot;
-&lt;/code&gt;&lt;/pre&gt;</code></pre>
-<pre><code class="lang-javascript">$(function(){
-  $(&#39;body&#39;).executr();
+  alert "Testing!"
+<span class="tag">&lt;/<span class="title">code</span>&gt;</span><span class="tag">&lt;/<span class="title">pre</span>&gt;</span></code></pre>
+<pre><code class="lang-javascript"><span class="variable">$(</span>function(){
+  <span class="variable">$(</span><span class="string">'body'</span>).executr();
 });</code></pre>
 <p>You can also make javascript executable, by either adding a <code>data-type=&quot;javascript&quot;</code> attribute to the code
 block, or by adding <code>defaultType: &#39;javascript&#39;</code> to the executr call.</p>
-<pre><code class="lang-html">&lt;code data-type=&quot;javascript&quot; executable&gt;
-alert(&quot;Testing!&quot;);
-&lt;/code&gt;</code></pre>
+<pre><code class="lang-html"><span class="tag">&lt;<span class="title">code</span> <span class="attribute">data-type</span>=<span class="value">"javascript"</span> <span class="attribute">executable</span>&gt;</span>
+alert("Testing!");
+<span class="tag">&lt;/<span class="title">code</span>&gt;</span></code></pre>
 <h3>Other Options</h3>
 <p>$.executr can be passed the following options</p>
 <pre><code class="lang-coffeescript">{
-    codeSelector: &#39;code[executable]&#39; # The jQuery selector items to be bound must match
+    codeSelector: 'code[executable]' # The jQuery selector items to be bound must match
 
-    outputTo: &#39;div.output&#39; # An element which should receive the output.
-    appendOutput: true # Whether output should replace the contents of outputTo, or append to it
+    outputTo: 'div.output' # An element which should receive the output.
+    appendOutput: true # Whether output should <span class="operator"><span class="keyword">replace</span> the contents <span class="keyword">of</span> outputTo, <span class="keyword">or</span> append <span class="keyword">to</span> it
 
-    defaultType: &#39;coffeescript&#39; # The default source languange, if not supplied as a data-type attribute
-    type: &#39;coffeescript&#39; # The type to force on all code blocks, even if otherwise specified.  Can also be a function.
-    coffeeOptions: {} # Extra options for the CoffeeScript compiler
+    defaultType: <span class="string">'coffeescript'</span> # The <span class="keyword">default</span> source languange, if <span class="keyword">not</span> supplied <span class="keyword">as</span> a data-type attribute
+    type: <span class="string">'coffeescript'</span> # The type <span class="keyword">to</span> force <span class="keyword">on</span> <span class="keyword">all</span> code blocks, even if otherwise specified.  Can also be a function.
+    coffeeOptions: {} # Extra options <span class="keyword">for</span> the CoffeeScript compiler
 
-    codeMirrorOptions: {} # Extra options for CodeMirror
+    codeMirrorOptions: {} # Extra options <span class="keyword">for</span> CodeMirror
 
-    setUp: -&gt; # Code to run before each code block
-    tearDown: -&gt; # Code to run after each code block
+    setUp: -&gt; # Code <span class="keyword">to</span> run before each code block
+    tearDown: -&gt; # Code <span class="keyword">to</span> run after each code block
 }</code></pre>
 <h4>Events</h4>
 <p>Executr will fire two events on the element it is bound to:</p>
