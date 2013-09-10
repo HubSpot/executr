@@ -6,10 +6,6 @@ code[executable] {
   overflow: hidden;
   position: relative;
   box-sizing: border-box;
-
-  /* TODO - get Zack to remove the inline js values applied here */
-  height: 100% !important;
-  width: 100% !important;
 }
 
 .executr-code-editor .CodeMirror pre {
@@ -35,7 +31,7 @@ code[executable] {
   background-color: rgba(0, 0, 0, 0.15);
 
   position: absolute;
-  top: 0 !important; /* TODO - get Zack to remove the inline js values applied here */
+  top: 0;
   bottom: 0;
   right: 0;
 
