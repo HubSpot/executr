@@ -74,12 +74,6 @@
       this.$runButton.addClass('executr-run-button');
       this.$runButton.text(this.opts.buttonText);
       this.$editorCont.append(this.$runButton);
-      this.$runButton.css({
-        top: "" + (this.$editorCont.height() / 2 - this.$runButton.height() / 2) + "px"
-      });
-      if (this.$editorCont.height() < parseInt(this.$runButton.css('font-size'), 10) + 4) {
-        this.$runButton.css('font-size', "" + (this.$editorCont.height() - 4) + "px");
-      }
       return this.$runButton.click(function() {
         return _this.execute();
       });
@@ -90,10 +84,6 @@
         _this = this;
       this.$editorCont = $('<div>');
       this.$editorCont.addClass('executr-code-editor');
-      this.$editorCont.css({
-        height: "" + (this.$el.height() + 10) + "px",
-        width: "" + (this.$el.width()) + "px"
-      });
       this.$editorCont.insertBefore(this.$el);
       this.$el.detach();
       if (typeof this.opts.type === 'function') {
@@ -141,10 +131,7 @@
       this.editor.setOption('mode', type);
       this.editor.setValue(code);
       this.editor.refresh();
-      scrollInfo = this.editor.getScrollInfo();
-      return this.$editorCont.css({
-        height: "" + scrollInfo.height + "px"
-      });
+      return scrollInfo = this.editor.getScrollInfo();
     };
 
     Editor.prototype.run = function(type, opts, code) {
