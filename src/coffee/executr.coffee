@@ -1,6 +1,6 @@
 runners =
   'javascript': (opts, code) ->
-      eval code
+    eval code
 
 converters =
   'coffeescript:javascript': (opts, code) ->
@@ -8,7 +8,6 @@ converters =
       bare: true
 
     CoffeeScript.compile code, csOptions
-
 
   'javascript:coffeescript': (opts, code) ->
     if Js2coffee
@@ -53,20 +52,11 @@ class Editor
 
     @$editorCont.append @$runButton
 
-    @$runButton.css
-      top: "#{ @$editorCont.height() / 2 - @$runButton.height() / 2 }px"
-
-    if @$editorCont.height() < parseInt(@$runButton.css('font-size'), 10) + 4
-      @$runButton.css 'font-size', "#{ @$editorCont.height() - 4 }px"
-
     @$runButton.click => do @execute
 
   buildEditor: ->
     @$editorCont = $('<div>')
     @$editorCont.addClass 'executr-code-editor'
-    @$editorCont.css
-      height: "#{ @$el.height() + 10 }px"
-      width: "#{ @$el.width() }px"
 
     @$editorCont.insertBefore @$el
     @$el.detach()
@@ -120,9 +110,6 @@ class Editor
     @editor.refresh()
 
     scrollInfo = @editor.getScrollInfo()
-
-    @$editorCont.css
-      height: "#{ scrollInfo.height }px"
 
   # Do the actual runny bit.
   #
@@ -192,7 +179,6 @@ $.fn.executr = (opts) ->
   if this.is(opts.codeSelector)
     # Allow single code blocks to be passed in
     opts.codeSelector = null
-
 
   codeSelectors = this.find(opts.codeSelector)
 
