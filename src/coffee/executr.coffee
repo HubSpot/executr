@@ -1,6 +1,6 @@
 runners =
   'javascript': (opts, code) ->
-      eval code
+    eval code
 
 converters =
   'coffeescript:javascript': (opts, code) ->
@@ -8,7 +8,6 @@ converters =
       bare: true
 
     CoffeeScript.compile code, csOptions
-
 
   'javascript:coffeescript': (opts, code) ->
     if Js2coffee
