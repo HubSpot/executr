@@ -201,6 +201,7 @@ $.fn.executr = (opts) ->
 
   $('.executr-switch').click ->
     $this = $(@)
+    $this.addClass('selected').siblings().removeClass('selected')
     codeType = $this.attr('data-code-type')
     codeSelectors.trigger 'executrSwitchType', codeType
 
